@@ -1,0 +1,2 @@
+- Portfolio content (name, email, socials, projects, stack) lives in constants at the top of src/routes/index.tsx — one place to edit.
+- Visual effects live in src/components/fx; Lenis is the only scroll system, so in-page links go through useScrollTo.
