@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowDownRight, ArrowUpRight, Menu, X } from "lucide-react";
 import { Spotlight } from "@/components/fx/Spotlight";
 import { BlurText, Magnet } from "@/components/fx/reactbits";
-import { projectTechnologies } from "@/data/project-technologies";
 import {
   useHomeSectionNavigation,
   useHomeSectionTarget,
@@ -12,6 +11,7 @@ import {
 } from "@/components/fx/section-navigation";
 import ecommerceShot from "@/assets/ecommerce.jpg";
 import fomaShot from "@/assets/foma.jpg";
+import habeshaDashboard from "@/assets/habesha-learn-dashboard.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -20,7 +20,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "I'm a Software Engineering student who builds full-stack applications and interactive projects, including an online shop and a football management game.",
+          "I'm a Software Engineering student who builds full-stack applications and interactive projects, including an online shop, a football management game, and an AI-powered learning platform.",
       },
       {
         property: "og:title",
@@ -29,7 +29,7 @@ export const Route = createFileRoute("/")({
       {
         property: "og:description",
         content:
-          "Two projects by Yordanos Teshome: a full-stack e-commerce app and FoMA, a football management simulator.",
+          "Selected projects by Yordanos Teshome: a full-stack e-commerce app, FoMA football simulator, and Habesha Learn AI study platform.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -42,7 +42,7 @@ const PROFILE = {
   name: "Yordanos Teshome",
   location: "",
   email: "tyordi132@gmail.com",
-  github: "",
+  github: "https://github.com/YOOOOOOOOoor",
   linkedin: "",
 };
 
@@ -59,11 +59,13 @@ const PROJECTS = [
     slug: "ecommerce",
     name: "Full-Stack E-commerce",
     brand: "Online shop · PERN stack",
-    url: "https://fullstack-ecommerce-ashen.vercel.app/",
+    url: "https://fullstack-ecommerce-v2.vercel.app/",
+    github: "https://github.com/YOOOOOOOOor/Fullstack-Ecommerce-V2",
     image: ecommerceShot,
+    purpose: "Connect product discovery, checkout, and order history in one customer journey.",
     blurb:
-      "A PERN stack shop with product categories, customer accounts, wishlists, order history and a payment flow.",
-    tags: projectTechnologies.ecommerce.map(({ name }) => name),
+      "Product discovery, customer accounts, wishlists, checkout, and order history backed by a separate API and PostgreSQL database.",
+    tags: ["React 19", "Node.js", "Express 5", "PostgreSQL"],
   },
   {
     no: "02",
@@ -71,10 +73,25 @@ const PROJECTS = [
     name: "FoMA Football Simulator",
     brand: "Football management · Career mode",
     url: "https://fo-ma-iota.vercel.app/",
+    github: "https://github.com/YOOOOOOOOoor/FoMA",
     image: fomaShot,
+    purpose: "Carry squad and tactical decisions into match results and season progression.",
     blurb:
-      "A browser football sim with career saves, squad and tactics management, transfers and match simulation.",
-    tags: projectTechnologies.foma.map(({ name }) => name),
+      "Start or continue a career, shape a squad, set tactics, manage transfers, and advance through simulated seasons.",
+    tags: ["React 18", "JavaScript", "Vite", "Simulation logic"],
+  },
+  {
+    no: "03",
+    slug: "habesha-learn",
+    name: "Habesha Learn",
+    brand: "Full-stack / AI-powered education",
+    url: "https://habesha-learn.vercel.app/",
+    github: "",
+    image: habeshaDashboard,
+    purpose: "Turn study PDFs into clear, interactive learning materials.",
+    blurb:
+      "An AI-powered learning platform that transforms uploaded study PDFs into structured learning materials, quizzes, and interactive study assistance.",
+    tags: ["React 19", "Express", "PostgreSQL", "Google Gemini", "FastAPI"],
   },
 ];
 
@@ -108,6 +125,7 @@ function Index() {
 function Nav() {
   const go = useHomeSectionNavigation();
   const [open, setOpen] = useState(false);
+  const menuButton = useRef<HTMLButtonElement>(null);
   const { scrollY } = useScroll();
   const bg = useTransform(
     scrollY,
@@ -127,6 +145,7 @@ function Nav() {
         aria-label="Main"
       >
         <button
+          ref={menuButton}
           onClick={() => go("top")}
           className="flex items-center gap-2 font-mono text-sm tracking-tight"
         >
@@ -149,6 +168,7 @@ function Nav() {
           className="md:hidden"
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
+          aria-controls="mobile-navigation"
           onClick={() => setOpen(!open)}
         >
           {open ? <X /> : <Menu />}
@@ -157,6 +177,13 @@ function Nav() {
       <AnimatePresence>
         {open && (
           <motion.ul
+            id="mobile-navigation"
+            onKeyDown={(event) => {
+              if (event.key === "Escape") {
+                setOpen(false);
+                menuButton.current?.focus();
+              }
+            }}
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
@@ -313,7 +340,7 @@ function Work() {
     <section id="work" tabIndex={-1} className="mx-auto max-w-7xl px-5 py-28 md:px-8 md:py-40">
       <SectionLabel no="01">Selected work</SectionLabel>
       <h2 className="max-w-3xl font-display text-5xl font-bold leading-[0.95] tracking-tight md:text-7xl">
-        <BlurText text="A couple of things I've built." />{" "}
+        <BlurText text="A few things I've built." />{" "}
       </h2>
       <div className="mt-16 border-t border-line">
         {PROJECTS.map((p) => (
@@ -351,7 +378,8 @@ function Project({ p }: { p: (typeof PROJECTS)[number] }) {
               {p.name}
             </h3>
             <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">
-              {p.blurb}
+              <span className="text-foreground">Purpose: </span>
+              {p.purpose} {p.blurb}
             </p>
             {p.tags.length > 0 && (
               <ul className="mt-5 flex flex-wrap gap-2" aria-label="Technologies">
@@ -371,17 +399,37 @@ function Project({ p }: { p: (typeof PROJECTS)[number] }) {
             <ArrowUpRight className="h-4 w-4 transition-transform group-hover/project:translate-x-1 group-hover/project:-translate-y-1" />
           </span>
         </div>
-        <div className="project-static-preview mt-6 aspect-[16/9] overflow-hidden rounded-xl border border-line md:hidden">
+        <div className={`project-static-preview mt-6 overflow-hidden rounded-xl border border-line md:hidden ${p.slug === "habesha-learn" ? "" : "aspect-[16/9]"}`}>
           <img
             src={p.image}
             alt={`${p.name} project preview`}
             loading="lazy"
-            width={1440}
-            height={900}
-            className="h-full w-full object-cover object-top"
+            width={p.slug === "habesha-learn" ? 1456 : 1440}
+            height={p.slug === "habesha-learn" ? 735 : 900}
+            className={p.slug === "habesha-learn" ? "block h-auto w-full" : "h-full w-full object-cover object-top"}
           />
         </div>
       </a>
+      <div className="flex flex-wrap gap-3 pb-8 pl-0 md:pl-[7rem]">
+        <a
+          href={p.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex min-h-11 items-center gap-2 rounded-full border border-line px-4 py-2 font-mono text-xs uppercase tracking-wider text-muted-foreground transition-colors hover:border-ember hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+        >
+          Live demo <ArrowUpRight className="h-4 w-4" />
+        </a>
+        {p.github && (
+          <a
+            href={p.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-11 items-center gap-2 rounded-full border border-line px-4 py-2 font-mono text-xs uppercase tracking-wider text-muted-foreground transition-colors hover:border-ember hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+          >
+            GitHub repository <ArrowUpRight className="h-4 w-4" />
+          </a>
+        )}
+      </div>
     </motion.article>
   );
 }
@@ -397,10 +445,10 @@ function About() {
           <p className="font-display text-3xl font-medium leading-[1.2] tracking-tight md:text-5xl">
             <BlurText
               stagger={0.03}
-              text="I'm studying Software Engineering and learning by building applications from the data layer up."
+              text="I'm a Software Engineering student who learns by building complete applications, from the data model and application logic to the interface."
             />{" "}
             <span className="font-serif italic text-muted-foreground">
-              Then I work through the details on screen.
+              I care about how each layer fits together.
             </span>
           </p>
           <div className="mt-12 grid gap-8 text-muted-foreground sm:grid-cols-2">
@@ -409,9 +457,10 @@ function About() {
               clear on a phone as well as a desktop.
             </p>
             <p>
-              Most of what I know comes from building projects and figuring out what each part needs
-              to do. I'm looking for opportunities to keep learning alongside a team and contribute
-              useful software.
+              My e-commerce project connects a shopping interface to an API and relational data.
+              FoMA takes a different direction: its JavaScript systems connect career, squad, and
+              match decisions. I'm open to suitable junior developer roles, freelance projects, and
+              relevant collaborations.
             </p>
           </div>
         </div>
@@ -428,33 +477,52 @@ function Stack() {
     [
       "JavaScript",
       "Languages",
-      "FoMA uses it for careers, seasons, transfers and match simulation.",
+      "Used in FoMA's career, season, transfer and match systems; also listed for the e-commerce app.",
     ],
-    ["HTML", "Languages", "HTML5 provides the base structure for web pages."],
-    ["CSS", "Languages", "CSS3 styles FoMA's management screens and this portfolio."],
-    ["SQL", "Languages", "A query language for relational databases."],
-    ["Python", "Languages", "Another language in my toolkit."],
-    ["TypeScript", "Languages", "Typesafe code used in this portfolio."],
-    ["React", "Frontend", "Used for this portfolio and the two project interfaces."],
-    ["React DOM", "Frontend", "Connects React interfaces to the browser."],
-    ["JSX", "Frontend", "The component syntax used with React in FoMA."],
-    ["Tailwind CSS", "Frontend", "Styles this portfolio's responsive layouts."],
-    ["Node.js", "Backend", "Runs the e-commerce server and FoMA project tooling."],
-    ["Express.js", "Backend", "Handles the e-commerce application's API."],
-    ["REST APIs", "Backend", "The e-commerce app connects its client to server endpoints."],
-    ["PostgreSQL", "Databases", "Stores relational data for the e-commerce app."],
-    ["MongoDB", "Databases", "A document database I've worked with."],
-    ["MySQL", "Databases", "A relational database I've worked with."],
-    ["Git", "Tools", "Tracks changes across the projects."],
-    ["GitHub", "Tools", "Hosts repositories and project code."],
-    ["Vite", "Tools", "Builds this portfolio and the FoMA app."],
-    ["npm", "Tools", "Installs packages and runs project commands."],
-    ["Vercel", "Tools", "Hosts the featured project sites."],
-    ["Render", "Tools", "A deployment platform I've used."],
-    ["TanStack Start / Router", "Tools", "Runs routes and server rendering in this portfolio."],
-    ["Vitest-style tests", "Tools", "FoMA tests cover seasons, simulation and transfers."],
-    ["Motion", "Animation & Motion", "Drives transitions and scroll reveals here."],
-    ["Lenis", "Animation & Motion", "Handles smooth scrolling in this portfolio."],
+    ["TypeScript", "Languages", "Used in this portfolio's routes, components, and data."],
+    ["HTML5", "Frontend", "Markup for FoMA and the portfolio."],
+    ["CSS3", "Frontend", "Styles FoMA; this portfolio uses Tailwind CSS 4."],
+    [
+      "React",
+      "Frontend",
+      "React 18 is listed for FoMA; React 19 is listed for e-commerce and used here.",
+    ],
+    [
+      "JSX + React DOM",
+      "Frontend",
+      "The component syntax and browser renderer used by the React projects.",
+    ],
+    [
+      "Tailwind CSS 4",
+      "Frontend",
+      "Styles this portfolio; also listed for the e-commerce interface.",
+    ],
+    [
+      "Node.js",
+      "Backend",
+      "Runs the e-commerce API and serves as project tooling for frontend builds.",
+    ],
+    ["Express 5", "Backend", "Listed for the e-commerce API server."],
+    ["PostgreSQL", "Databases", "Relational database listed for the e-commerce application."],
+    ["Vite", "Development tools", "Build tooling used by FoMA and this portfolio."],
+    ["npm", "Development tools", "Package and command tooling for JavaScript projects."],
+    [
+      "ESLint",
+      "Development tools",
+      "Linting this portfolio; also listed among e-commerce development tools.",
+    ],
+    [
+      "Vitest",
+      "Development tools",
+      "Listed for FoMA tests covering career history, season economy, simulation runtime, and transfers.",
+    ],
+    [
+      "TanStack Start + Router",
+      "Development tools",
+      "Routing and server rendering in this portfolio.",
+    ],
+    ["Motion", "Animation & Motion", "Transitions and scroll reveals in this portfolio."],
+    ["Lenis", "Animation & Motion", "Smooth scrolling in this portfolio."],
   ];
   const categories = [
     "All",
@@ -462,7 +530,7 @@ function Stack() {
     "Backend",
     "Databases",
     "Languages",
-    "Tools",
+    "Development tools",
     "Animation & Motion",
   ];
   const visibleTechnologies = technologies.filter(
@@ -481,7 +549,8 @@ function Stack() {
         <span className="font-serif font-normal italic text-gradient-ember">reach for.</span>
       </h2>
       <p className="mt-5 max-w-xl text-muted-foreground">
-        Here are the tools behind these projects and this site. Select one to see where it fits.
+        Technologies are grouped by role and tied to the projects where they appear. The directory
+        distinguishes project stacks from this portfolio's own tools.
       </p>
       <div
         className="mt-8 flex flex-wrap gap-2"
@@ -543,8 +612,9 @@ function Contact() {
           Start a conversation
         </h2>
         <p className="mx-auto mt-5 max-w-xl text-muted-foreground">
-          Open to product engineering roles, freelance builds, and collaboration on motion-heavy web
-          experiences.
+          I'm open to suitable junior developer roles, freelance projects, and relevant
+          collaborations. Browse the case studies or email me directly at {PROFILE.email}. This form
+          opens a draft in your email app; you will need to send it there.
         </p>
         <form
           className="mx-auto mt-10 grid max-w-2xl gap-5 text-left"
@@ -556,6 +626,10 @@ function Contact() {
             const name = String(data.get("name") ?? "").trim();
             const email = String(data.get("email") ?? "").trim();
             const message = String(data.get("message") ?? "").trim();
+            if (!name || !email || !message) {
+              setFeedback("Please complete all three fields before continuing.");
+              return;
+            }
             const subject = `Portfolio inquiry — ${name}`;
             const body = `Name: ${name}\nEmail: ${email}\n\n${message}`;
             const mailto = `mailto:${PROFILE.email}?${new URLSearchParams({
@@ -607,7 +681,7 @@ function Contact() {
             >
               Send message
             </button>
-            <p aria-live="polite" className="text-sm text-muted-foreground">
+            <p role="status" aria-live="polite" className="text-sm text-muted-foreground">
               {feedback}
             </p>
           </div>
